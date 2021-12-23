@@ -2,8 +2,14 @@ grammar Calculette;
 
 // REGLES 
 start
-	: expr EOF {System.out.println($expr.code);}
-	| bexpr EOF {System.out.println($bexpr.code);}
+	: expr fin_instruction {System.out.println($expr.code);}
+	| bexpr fin_instruction {System.out.println($bexpr.code);}
+;
+
+fin_instruction
+	: EOF
+	| NEWLINE
+	| ';'
 ;
 
 bexpr returns [String code]
