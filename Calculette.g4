@@ -1,50 +1,44 @@
 grammar Calculette;
-// règles de la grammaire
-start 
- : expr fin_expression {System.out.println($expr.code + "WRITE\n" + "POP\n" + "HALT\n");} ;
+
+// REGLES 
+start
+	: expr fin_instruction {System.out.println($expr.code);}
+	| bexpr fin_instruction {System.out.println($bexpr.code);}
+;
+
+fin_instruction
+    : EOF
+    | NEWLINE
+    | ';'
+;
+
+bexpr returns [String code]
+@init{$code = new String();}
+	: a=bexpr 'and' b=bexpr {$code=$a.code + $b.code + "MUL\n";}
+	| a=bexpr 'or' b=bexpr {$code=$a.code + $b.code + "ADD\n";}
+	//| 'not' a=bexpr {
+	//| a=bexpr '->' b=bexpr {if($a.code=='true'){$code=$a.code + $b.code + "MUL\n"; }}
+	//| BOOL {}
+	| 'true' {$code = $code + "PUSHI " + "1\n";} 
+	| 'false' {$code = $code + "PUSHI " + "0\n";}
+;
 
 expr returns [String code]
- : '(' a=expr ')' {$code = $a.code;}
- | a=expr '/' b=expr {$code = $a.code + $b.code + "DIV" + '\n';}
- | a=expr '*' b=expr {$code = $a.code + $b.code + "MUL" + '\n';}
- | a=expr '+' b=expr {$code = $a.code + $b.code + "ADD" + '\n';}
- | a=expr '-' b=expr {$code = $a.code + $b.code + "SUB" + '\n';} // inversé ?
- | '-' ENTIER {$code = "PUSHI " + -$ENTIER.int + '\n';} 
- | ENTIER {$code = "PUSHI " + $ENTIER.int + '\n';}
- | a=expr '>' b=expr //todo
- | bool {$code = $bool.code;}
+@init{$code = new String();}
+	: a=expr '*' b=expr {$code=$a.code + $b.code + "MUL\n";}  
+	| a=expr '+' b=expr {$code=$a.code + $b.code + "ADD\n";}  
+	| a=expr '/' b=expr {$code=$a.code + $b.code + "DIV\n";}
+	| a=expr '-' b=expr {$code=$a.code + $b.code + "SUB\n";}
+	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
-bool returns [String code]
- : '(' a=bool ')' {$code = $a.code;}
- | 'not' a=bool {$code = "PUSHI 1" + '\n' + $a.code + "SUB" + '\n';}
- | a=bool '->' b=bool // (not a or b) === (1 + a*b - a)
- {
- $code = "PUSHI 1" + '\n';
- $code += $a.code + $b.code + "MUL" + '\n';
- $code += "ADD" + '\n';
- $code += $a.code + '\n';
- $code += "SUB" + '\n'; 
- } 
- | a=bool 'and' b=bool {$code = $a.code + $b.code + "MUL" + '\n';} // a*b
- | a=bool 'or' b=bool // b - a*b + a
- {
- $code = $b.code + '\n';
- $code += $a.code + $b.code + "MUL" + '\n';
- $code += "SUB" + '\n';
- $code += $a.code + '\n';
- $code += "ADD" + '\n';
- }
- | 'true' {$code = "PUSHI" + "1" + '\n';}
- | 'false' {$code = "PUSHI" + "0" + '\n';}
-;
 
-fin_expression
- : EOF | NEWLINE | ';'
-;
-
-// règles du lexer. Skip pour dire ne rien faire
+// LEXER
 NEWLINE : '\r'? '\n' -> skip;
 WS : (' '|'\t')+ -> skip;
-ENTIER : ('0'..'9')+;
+INT : ('0'..'9')+;
+BOOL : 'true' | 'false';
+BOP : 'and' | 'or';
+NOT : 'not';
 UNMATCH : . -> skip;
