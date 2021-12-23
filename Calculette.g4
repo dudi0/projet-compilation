@@ -1,4 +1,4 @@
-grammar Calculette_21905111;
+grammar Calculette;
 
 // REGLES 
 start
