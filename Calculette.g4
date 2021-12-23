@@ -1,15 +1,9 @@
-grammar Calculette;
+grammar Calculette_21905111;
 
 // REGLES 
 start
-	: expr fin_instruction {System.out.println($expr.code);}
-	| bexpr fin_instruction {System.out.println($bexpr.code);}
-;
-
-fin_instruction
-    : EOF
-    | NEWLINE
-    | ';'
+	: expr EOF {System.out.println($expr.code);}
+	| bexpr EOF {System.out.println($bexpr.code);}
 ;
 
 bexpr returns [String code]
