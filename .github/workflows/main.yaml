@@ -83,7 +83,7 @@ jobs:
             nb_tests=0
             nb_tests_faux=0
             
-            while IFS = read  -r line; do
+            while read line; do
                 test '$line'
             done < ./tools/test.txt
 
