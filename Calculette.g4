@@ -7,7 +7,9 @@ start
 ;
 
 fin_instruction
- : EOF | NEWLINE | ';'
+ 	: EOF 
+	| NEWLINE 
+	| ';'
  ;
 
 bexpr returns [String code]
@@ -36,7 +38,7 @@ expr returns [String code]
 NEWLINE : '\r'? '\n' -> skip;
 WS : (' '|'\t')+ -> skip;
 INT : ('0'..'9')+;
-BOOL : 'true' | 'false';
-BOP : 'and' | 'or';
-NOT : 'not';
+//BOOL : 'true' | 'false';
+//BOP : 'and' | 'or';
+//NOT : 'not';
 UNMATCH : . -> skip;
