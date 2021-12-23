@@ -2,8 +2,8 @@ grammar Calculette;
 
 // REGLES 
 start
-	: expr fin_instruction {System.out.println($expr.code);}
-	| bexpr fin_instruction {System.out.println($bexpr.code);}
+	: expr fin_instruction {System.out.println($expr.code + "WRITE\nPOP\nHALT\n");}
+	| bexpr fin_instruction {System.out.println($bexpr.code  + "WRITE\nPOP\nHALT\n");}
 ;
 
 fin_instruction
