@@ -83,7 +83,7 @@ jobs:
             nb_tests=0
             nb_tests_faux=0
             
-            while read -r -d \n ; do
+            while read -r ; do
                 test $line
             done < ./tools/test.txt
 
