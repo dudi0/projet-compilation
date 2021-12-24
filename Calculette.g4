@@ -25,7 +25,7 @@ bexpr returns [String code]
 
 expr returns [String code]
 @init{$code = new String();}
-	:'(' expr ')' {$code = $expr;}
+	:'(' a=expr ')' {$code = $a.code;}
 	| a=expr '*' b=expr {$code=$a.code + $b.code + "MUL\n";}  
 	| a=expr '/' b=expr {$code=$a.code + $b.code + "DIV\n";}
 	| a=expr '+' b=expr {$code=$a.code + $b.code + "ADD\n";}  
