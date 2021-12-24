@@ -85,7 +85,7 @@ jobs:
             
             #---Test arithmétique
             while read line; do
-                test $line 'true'
+                test $line true
             done < ./tests/test-bool.txt
 
             echo
