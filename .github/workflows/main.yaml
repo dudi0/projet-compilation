@@ -84,7 +84,7 @@ jobs:
             nb_tests_faux=0
             
             #---Test arithmétique
-            while read line; do
+            while IFS= read line; do
                 test $line 42
             done < ./tests/test-arithm.txt
 
