@@ -68,7 +68,7 @@ jobs:
                 expr=$1
                 resultat_attendu=$2
                 
-                resultat=$(mvap "$expr" | xargs) # xargs trims whitespace
+                resultat=$(mvap "$expr")
                 
                 if [ "$resultat" = "$resultat_attendu" ]
                 then
@@ -85,7 +85,7 @@ jobs:
             
             #---Test arithmétique
             while IFS= read line; do
-                test '$line' 42
+                test $line 42
             done < ./tests/test-arithm.txt
 
             echo
