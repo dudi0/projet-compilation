@@ -57,7 +57,7 @@ jobs:
                 execMVAP fichier.mvap.cbap
             }
             
-            function test () {
+            function test ($line) {
                 ### Cette fonction teste une expression
                 # D'abord l'expression
                 # Puis la valeur attendue
@@ -65,9 +65,9 @@ jobs:
 
                 let "nb_tests+=1"
                 
-                expr=$1
-                echo $1
-                resultat_attendu=$2
+                expr=$line
+                echo $line #là on n'a plus toute la ligne what the fuck
+                resultat_attendu=$1
                 
                 #resultat=$(mvap "$expr" | xargs)
                 
@@ -87,7 +87,7 @@ jobs:
             #---Test arithmétique
             while IFS= read line; do
                 #echo $line, on affiche bien l'ensemble de la ligne il est où le problème sa race de ses morts
-                test $line 42
+                test($line) 42
             done < ./tests/test-arithm.txt
 
             echo
