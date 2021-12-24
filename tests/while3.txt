@@ -1,16 +1,17 @@
-int x
-int y
-int xy
-int z
-x=42
-y=(5*6*7*11 + 2)/11*5-1008
-xy=x-y
-afficher(xy)
-xy=x+42
-afficher(xy)
-lire(z)
-afficher(x)
-x=x*z
-afficher(x)
-afficher(z)
-afficher(x*z)
+int f
+int f1
+int f2
+int n
+lire(n)
+f1 = 1
+f2=1
+f=1
+repeter {
+ f=f1+f2
+ f2=f1
+ f1=f
+ n=n-1
+ } tantque(n>=2)
+ 
+afficher(f)
+
