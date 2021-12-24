@@ -23,7 +23,7 @@ bexpr returns [String code]
 	| a=bexpr 'and' b=bexpr {$code=$a.code + $b.code + "MUL\n";}
 	| a=bexpr 'or' b=bexpr {$code=$a.code + $b.code + "ADD\n";}
 	//| a=bexpr '->' b=bexpr {}
-	| BOOL {$code = $code + "PUSHI " + $BOOL.text() +"\n";}
+	| BOOL {$code = $code + "PUSHI " + $BOOL.getText() +"\n";}
 ;
 
 nexpr returns [String code]
