@@ -18,7 +18,8 @@ fin_instruction
 
 bexpr returns [String code]
 @init{$code = new String();}
-	: a=bexpr 'and' b=bexpr {$code=$a.code + $b.code + "MUL\n";}
+	:'(' a=bexpr ')' {$code = $a.code;}
+	| a=bexpr 'and' b=bexpr {$code=$a.code + $b.code + "MUL\n";}
 	| a=bexpr 'or' b=bexpr {$code=$a.code + $b.code + "ADD\n";}
 	//| 'not' a=bexpr {
 	//| a=bexpr '->' b=bexpr {if($a.code=='true'){$code=$a.code + $b.code + "MUL\n"; }}
