@@ -3,7 +3,11 @@ grammar Calculette;
 // REGLES 
 start
 	: expr fin_instruction {System.out.println($expr.code + "WRITE\nPOP\nHALT\n");}
-	| bexpr fin_instruction {System.out.println($bexpr.code  + "WRITE\nPOP\nHALT\n");}
+;
+
+expr returns [String code]
+	: nexpr fin_instruction {$code = $nexpr.code;}
+	| bexpr fin_instruction {$code = $bexpr.code;}
 ;
 
 fin_instruction
@@ -23,14 +27,14 @@ bexpr returns [String code]
 	| 'false' {$code = $code + "PUSHI " + "0\n";}
 ;
 
-expr returns [String code]
+nexpr returns [String code]
 @init{$code = new String();}
-	:'(' a=expr ')' {$code = $a.code;}
-	| a=expr '/' b=expr {$code=$a.code + $b.code + "DIV\n";}
-	| a=expr '*' b=expr {$code=$a.code + $b.code + "MUL\n";}  
+	:'(' a=nexpr ')' {$code = $a.code;}
+	| a=nexpr '/' b=nexpr {$code=$a.code + $b.code + "DIV\n";}
+	| a=nexpr '*' b=nexpr {$code=$a.code + $b.code + "MUL\n";}  
 
-	| a=expr '+' b=expr {$code=$a.code + $b.code + "ADD\n";}  
-	| a=expr '-' b=expr {$code=$a.code + $b.code + "SUB\n";}
+	| a=nexpr '+' b=nexpr {$code=$a.code + $b.code + "ADD\n";}  
+	| a=nexpr '-' b=nexpr {$code=$a.code + $b.code + "SUB\n";}
 	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
