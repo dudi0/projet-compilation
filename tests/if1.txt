@@ -1,0 +1,4 @@
+int i
+i=10
+si(i<11) i=i+2
+afficher(i)
