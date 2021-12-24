@@ -84,9 +84,9 @@ jobs:
             nb_tests_faux=0
             
             #---Test arithmétique
-            while IFS=\n read -r line; do
+            while IFS=\n read line; do
                 test $line true
-            done < ./tests/test-bool.txt
+            done < ./tests/test-arithm.txt
 
             echo
             echo "-------------------------------------------------------------------"
