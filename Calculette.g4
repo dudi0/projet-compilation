@@ -21,8 +21,8 @@ nexpr returns [String code]
 @init{$code = new String();}
 // TODO: pow, gt, lt, eq...
 	:'(' a=nexpr ')' {$code = $a.code;}
-	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
-	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText();}
+	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
+	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText() + "\n";}
 	| '-' INT {$code = $code + "PUSHI "+ -$INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
