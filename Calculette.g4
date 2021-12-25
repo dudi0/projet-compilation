@@ -49,8 +49,8 @@ WS 		: (' '|'\t')+ -> skip;
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
-ADD_OP 	: '+' {setText("ADD")} | '-' {setText("SUB")};
-MUL_OP 	: '*' {setText("MUL")} | '/' {setText("DIV")};
+ADD_OP 	: '+' {setText("ADD");} | '-' {setText("SUB");};
+MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
 AND 	: 'and';
