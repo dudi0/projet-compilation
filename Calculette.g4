@@ -8,7 +8,7 @@ start
 calcul returns [String code]
 	: nexpr fin_instruction {$code = $nexpr.code;}
 	| bexpr fin_instruction {$code = $bexpr.code;}
-	| declaration fin_instruction {$code = $declaration.code;}
+//	| declaration fin_instruction {$code = $declaration.code;}
 ;
 
 fin_instruction
@@ -38,11 +38,11 @@ bexpr returns [String code]
 	| BOOL {$code = $code + "PUSHI " + $BOOL.getText() +"\n";}
 ;
 
-declaration returns [String code]
-@init{$code = new String();}
+/*declaration returns [String code]
+#@init{$code = new String();}
 	: TYPE ID {}
 ;
-
+*/
 
 // LEXER
 NEWLINE : '\r'? '\n' -> skip;
