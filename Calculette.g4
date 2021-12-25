@@ -51,7 +51,8 @@ WS 		: (' '|'\t')+ -> skip;
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 MINUS 	: '-';
-ADD_OP 	: '+' {setText("ADD");} | MINUS {setText("SUB");};
+fragment OP_MINUS : '-';
+ADD_OP 	: '+' {setText("ADD");} | OP_MINUS {setText("SUB");};
 MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
