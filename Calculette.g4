@@ -23,7 +23,7 @@ nexpr returns [String code]
 	:'(' a=nexpr ')' {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
 	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText() + "\n";}
-	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
@@ -51,8 +51,7 @@ WS 		: (' '|'\t')+ -> skip;
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 MINUS 	: '-';
-fragment OP_MINUS : '-';
-ADD_OP 	: '+' {setText("ADD");} | OP_MINUS {setText("SUB");};
+ADD_OP 	: '+' {setText("ADD");} | MINUS {setText("SUB");};
 MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
