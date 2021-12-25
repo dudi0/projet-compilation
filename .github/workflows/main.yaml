@@ -86,7 +86,7 @@ jobs:
             #---Test arithmétique
             while IFS= read line; do
                 test "$line" "1"
-            done < ./tests/test-bool.txt
+            done < ./tests/test-arithm.txt
 
             echo
             echo "-------------------------------------------------------------------"
