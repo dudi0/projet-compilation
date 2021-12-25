@@ -2,7 +2,7 @@ grammar Calculette;
 
 // REGLES 
 start
-	: calcul fin_instruction {System.out.println($calcul.code" + WRITE\n" + "POP\n" + "HALT\n");}
+	: calcul fin_instruction {System.out.println($calcul.code + "WRITE\n" + "POP\n" + "HALT\n");}
 ;
 
 calcul returns [String code]
@@ -50,8 +50,8 @@ WS 		: (' '|'\t')+ -> skip;
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
-ADD_OP 	: '+' {setText("ADD\n");} | '-' {setText("SUB\n");};
-MUL_OP 	: '*' {setText("MUL\n");} | '/' {setText("DIV\n");};
+ADD_OP 	: '+' {setText("ADD");} | '-' {setText("SUB");};
+MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
 AND 	: 'and';
