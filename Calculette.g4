@@ -50,7 +50,8 @@ WS 		: (' '|'\t')+ -> skip;
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
-ADD_OP 	: '+' {setText("ADD");} | '-' {setText("SUB");};
+MINUS 	: '-';
+ADD_OP 	: '+' {setText("ADD");} | MINUS {setText("SUB");};
 MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
