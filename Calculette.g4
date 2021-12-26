@@ -26,6 +26,7 @@ nexpr returns [String code]
 	| a=nexpr MUL_OP b=nexpr 	{$code=$a.code + $b.code + $MUL_OP.getText();}
 	| a=nexpr MINUS b=nexpr 	{$code=$a.code + $b.code + $MINUS.getText();}
 	| a=nexpr ADD b=nexpr 		{$code=$a.code + $b.code + $ADD.getText();}
+	| a=nexpr OP_BOOL b=nexpr	{$code = $a.code + $b.code + $OP_BOOL.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
@@ -37,7 +38,6 @@ bexpr returns [String code]
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| a=nexpr OP_BOOL b=nexpr	{$code = $a.code + $b.code + $OP_BOOL.getText();}
 	//| a=bexpr '->' b=bexpr {}
 	| BOOL {$code += "PUSHI " + $BOOL.getText();}
 ;
