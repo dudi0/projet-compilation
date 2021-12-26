@@ -2,7 +2,7 @@ grammar Calculette;
 
 // REGLES 
 start
-	: calcul EOF {System.out.println($calcul.code + "WRITE\n" + "POP\n" + "HALT\n");}
+	: calcul fin_instruction {System.out.println($calcul.code + "WRITE\n" + "POP\n" + "HALT\n");}
 ;
 
 calcul returns [String code]
@@ -12,7 +12,8 @@ calcul returns [String code]
 ;
 
 fin_instruction
-	: NEWLINE
+	: EOF
+	| NEWLINE
 	| ';'
 ;
 
@@ -21,8 +22,9 @@ nexpr returns [String code]
 // TODO: pow, gt, lt, eq...
 	: LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
-	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText() + "\n";}
-	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| a=nexpr '-' b=nexpr {$code=$a.code + $b.code + "SUB\n";}
+	| a=nexpr '+' b=nexpr {$code=$a.code + $b.code + "ADD\n";}
+	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
