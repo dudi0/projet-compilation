@@ -1,114 +1,65 @@
 grammar Calculette;
 
-// règles de la grammaire
-start 
- @after {System.out.println("HALT\n");}
- : (expr fin_expression {System.out.println($expr.code);})+
+// REGLES 
+start
+	: calcul fin_instruction {System.out.println($calcul.code + "WRITE\n" + "POP\n" + "HALT\n");}
 ;
 
-expr returns [String code]
- : expr_arith {$code = $expr_arith.code + "WRITE\n" + "POP\n";}
- | expr_bool {$code = $expr_bool.code + "WRITE\n" + "POP\n";}
+calcul returns [String code]
+	: nexpr fin_instruction {$code = $nexpr.code;}
+	| bexpr fin_instruction {$code = $bexpr.code;}
+//	| declaration fin_instruction {$code = $declaration.code;}
 ;
 
-
-// expression arithmétique
-expr_arith returns [String code]
- : L_PARENTHESE a=expr_arith R_PARENTHESE {$code = $a.code;}
- | a=expr_arith '^' b=expr_arith {
-     //todo: décrémenter b jusqu'à trouver 0 et multiplier a par a pendant ce temps
-     $code = $a.code + $b.code + "DIV\n";
-
-    }
- | a=expr_arith MUL_OU_DIV b=expr_arith {$code = $a.code + $b.code + $MUL_OU_DIV.getText() + "\n";}
- | a=expr_arith '+' b=expr_arith {$code = $a.code + $b.code + "ADD" + "\n";}
- | a=expr_arith '-' b=expr_arith {$code = $a.code + $b.code + "SUB" + "\n";}
- | nombre_entier {$code = $nombre_entier.code;}
+fin_instruction
+	: EOF
+	| NEWLINE
+	| ';'
 ;
 
-nombre_entier returns [String code]
- : '-' ENTIER {$code = "PUSHI " + -$ENTIER.int + '\n';}
- | ENTIER {$code = "PUSHI " + $ENTIER.int + '\n';}
+nexpr returns [String code]
+@init{$code = new String();}
+// TODO: pow, gt, lt, eq...
+	:'(' a=nexpr ')' {$code = $a.code;}
+	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
+	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText() + "\n";}
+	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
-// expression booléenne
-expr_bool returns [String code]
- : L_PARENTHESE a=expr_bool R_PARENTHESE {$code = $a.code;}
- | NOT a=expr_bool {$code = "PUSHI 1\n" + $a.code + "SUB\n";} // (not a) === (1 - a)
- | c=expr_arith OP_COMPARAISON d=expr_arith
-   {$code = $c.code + $d.code + $OP_COMPARAISON.text + "\n";}
- | a=expr_bool AND b=expr_bool {$code = $a.code + $b.code + "MUL\n";} // (a and b) === (a * b)
- | a=expr_bool OR b=expr_bool // (a or b) === ((a+b) <> 0)
-  {
-    $code = $a.code + $b.code + "ADD\n";
-    $code += "PUSHI 0\n" + "NEQ\n";
-  }
- | a=expr_bool OR_LAZY b=expr_bool // tentative de or avec lazy evaluation
-    {
-        $code = $a.code + '\n' + "PUSHG 0\n";
-
-        $code += "PUSHI 1\n"; // if
-        $code += "NEQ \n"; // (a == true) === not (a <> 1)
-        $code += "JUMPF else\n";
-
-        $code += $b.code + '\n'; // then
-        $code += "ADD\n" + "PUSHI 1\n" + "SUPEQ\n";
-        $code += "JUMP else\n";
-        $code += "LABEL else\n" ; //else
-    }
- | a=expr_bool XOR b=expr_bool // (a xor b) === (a <> b)
-  {$code = $a.code + $b.code + "NEQ\n";}
- | BOOL {$code = "PUSHI" + $BOOL.text + '\n';}
+bexpr returns [String code]
+@init{$code = new String();}
+// TODO: implication, lazy or
+	:'(' a=bexpr ')' {$code = $a.code;}
+	| NOT a=bexpr {$code = "PUSHI 1\n" + $a.code + "SUB\n";}
+	| a=bexpr AND b=bexpr {$code=$a.code + $b.code + "MUL\n";}
+	| a=bexpr OR b=bexpr {$code=$a.code + $b.code + "ADD\n";}
+	//| a=bexpr '->' b=bexpr {}
+	| BOOL {$code = $code + "PUSHI " + $BOOL.getText() +"\n";}
 ;
 
-
-fin_expression
- : EOF | NEWLINE | ';'
+/*declaration returns [String code]
+#@init{$code = new String();}
+	: TYPE ID {}
 ;
+*/
 
-// règles du lexer. Skip pour dire ne rien faire
+// LEXER
 NEWLINE : '\r'? '\n' -> skip;
-WS : (' ' | '\t')+ -> skip;
+WS 		: (' '|'\t')+ -> skip;
 
-ENTIER : ('0'..'9')+;
-BOOL : 'true' { setText("1"); } | 'false' { setText("0"); };
+INT 	: [0-9]+;
+FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 
-// parenthèses
-L_PARENTHESE : '(';
-R_PARENTHESE : ')';
+ADD_OP 	: '+' {setText("ADD");} | '-' {setText("SUB");};
+MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
-MUL_OU_DIV
- : '*' { setText("MUL"); } | '/' { setText("DIV"); }
-;
+BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
+AND 	: 'and';
+OR 		: 'or' ;
+NOT 	: 'not' ;
 
-
-// une des quatres opérations arithmétiques simples
-/*OP_ARITH_SIMPLE 
- : '/' { setText("DIV"); }
- | '*' { setText("MUL"); }
- | '+' { setText("ADD"); }
- | MOINS { setText("SUB"); }
-;*/
-
-MOINS_UNAIRE : MOINS;
-
-fragment MOINS : '-';
-
-// un des opérateurs de comparaison
-OP_COMPARAISON
- : '==' { setText("EQ"); }
- | '<>' { setText("NEQ"); }
- | '<=' { setText("INFEQ"); }
- | '<' { setText("INF"); }
- | '>=' { setText("SUPEQ"); }
- | '>' { setText("SUP"); }
-;
-
-// Symboles de comparaison
-AND : 'and';
-OR : 'or';
-OR_LAZY : 'or_lazy';
-XOR : 'xor';
-NOT : 'not';
+TYPE 	: 'int' | 'float' | 'bool';
+ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
 
 UNMATCH : . -> skip;
