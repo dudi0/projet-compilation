@@ -2,7 +2,8 @@ grammar Calculette;
 
 // REGLES 
 start
-	: calcul fin_instruction {System.out.println($calcul.code + "WRITE\n" + "POP\n" + "HALT\n");}
+@after {System.out.println("HALT\n");}
+	: (calcul fin_instruction)+ {System.out.println($calcul.code + "WRITE\n" + "POP\n");}
 ;
 
 calcul returns [String code]
