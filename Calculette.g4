@@ -20,17 +20,17 @@ fin_instruction
 nexpr returns [String code]
 @init{$code = new String();}
 // TODO: pow, gt, lt, eq...
-	:'(' a=nexpr ')' {$code = $a.code;}
+	:LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
 	| a=nexpr ADD_OP b=nexpr {$code=$a.code + $b.code + $ADD_OP.getText() + "\n";}
-	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
 bexpr returns [String code]
 @init{$code = new String();}
 // TODO: implication, lazy or
-	:'(' a=bexpr ')' {$code = $a.code;}
+	:LPAR a=bexpr RPAR {$code = $a.code;}
 	| NOT a=bexpr {$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr {$code=$a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr {$code=$a.code + $b.code + "ADD\n";}
@@ -48,10 +48,16 @@ bexpr returns [String code]
 NEWLINE : '\r'? '\n' -> skip;
 WS 		: (' '|'\t')+ -> skip;
 
+LPAR	: '(';
+RPAR	: ')';
+
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 
-ADD_OP 	: '+' {setText("ADD");} | '-' {setText("SUB");};
+MINUS 	: '-';
+fragment OP_MINUS : MINUS; 
+
+ADD_OP 	: '+' {setText("ADD");} | OP_MINUS {setText("SUB");};
 MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
