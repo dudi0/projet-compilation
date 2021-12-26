@@ -1,7 +1,7 @@
-true and false or true and not true
+true or true
 
 ==out==
-0
+1
 
 -----
 true or false and false
