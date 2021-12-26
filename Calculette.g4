@@ -7,6 +7,7 @@ start
 ;
 
 calcul returns [String code]
+@init{$code = new String();}
 	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
 	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
 //	| declaration fin_instruction {$code = $declaration.code;}
