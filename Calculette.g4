@@ -22,23 +22,24 @@ fin_instruction
 nexpr returns [String code]
 @init{$code = new String();}
 // TODO: pow
-	: LPAR a=nexpr RPAR {$code = $a.code;}
-	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
-	| a=nexpr MINUS b=nexpr {$code=$a.code + $b.code + $MINUS.getText();}
-	| a=nexpr ADD b=nexpr {$code=$a.code + $b.code + $ADD.getText();}
+	: LPAR a=nexpr RPAR 		{$code = $a.code;}
+	| a=nexpr MUL_OP b=nexpr 	{$code=$a.code + $b.code + $MUL_OP.getText();}
+	| a=nexpr MINUS b=nexpr 	{$code=$a.code + $b.code + $MINUS.getText();}
+	| a=nexpr ADD b=nexpr 		{$code=$a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
-	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
+	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
 bexpr returns [String code]
 @init{$code = new String();}
 // TODO: implication, lazy or
-	: LPAR a=bexpr RPAR {$code = $a.code;}
-	| NOT a=bexpr {$code = "PUSHI 1\n" + $a.code + "SUB\n";}
-	| a=bexpr AND b=bexpr {$code=$a.code + $b.code + "MUL\n";}
-	| a=bexpr OR b=bexpr {$code=$a.code + $b.code + "ADD\n";}
+	: LPAR a=bexpr RPAR 		{$code = $a.code;}
+	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
+	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
+	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
+	| a=nexpr OP_BOOL b=nexpr	{}
 	//| a=bexpr '->' b=bexpr {}
-	| BOOL {$code += "PUSHI " + $BOOL.getText() +"\n";}
+	| BOOL {$code += "PUSHI " + $BOOL.getText();}
 ;
 
 /*declaration returns [String code]
@@ -60,19 +61,21 @@ INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 
 MINUS 	: '-' {setText("SUB\n");};
-
 ADD 	: '+' {setText("ADD\n");};
 MUL_OP 	: '*' {setText("MUL\n");} | '/' {setText("DIV\n");};
 
-BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
+BOOL 	: 'true' {setText("1\n");} | 'false' {setText("0\n");};
 AND 	: 'and';
 OR 		: 'or' ;
 NOT 	: 'not' ;
-BEQUAL	: '==';
-GT		: '>';
-LT		: '<';
-GTE		: '>=';
-LTE		: '<=';
+OP_BOOL 
+	: '=='	{setText("EQUAL\n");}
+	| '!='	{setText("NEQ\n");}
+	| '>' 	{setText("SUP\n");}
+	| '<' 	{setText("INF\n");}
+	| '>='	{setText("SUPEQ\n");}
+	| '<='	{setText("INFEQ\n");}
+;
 
 TYPE 	: 'int' | 'float' | 'bool';
 ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
