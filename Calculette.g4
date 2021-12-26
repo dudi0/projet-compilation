@@ -38,12 +38,12 @@ bexpr returns [String code]
 	| a=bexpr AND b=bexpr {$code=$a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr {$code=$a.code + $b.code + "ADD\n";}
 	//| a=bexpr '->' b=bexpr {}
-	| BOOL {$code = $code + "PUSHI " + $BOOL.getText() +"\n";}
+	| BOOL {$code += "PUSHI " + $BOOL.getText() +"\n";}
 ;
 
 /*declaration returns [String code]
 @init{$code = new String();}
-	: TYPE ID {}
+	: TYPE ID (EQUAL VALUE){}
 ;
 */
 
@@ -68,8 +68,14 @@ BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
 AND 	: 'and';
 OR 		: 'or' ;
 NOT 	: 'not' ;
+BEQUAL	: '==';
+GT		: '>';
+LT		: '<';
+GTE		: '>=';
+LTE		: '<=';
 
 TYPE 	: 'int' | 'float' | 'bool';
 ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
+EQUAL	: '=';
 
 UNMATCH : . -> skip;
