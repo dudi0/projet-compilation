@@ -3,22 +3,23 @@ grammar Calculette;
 // REGLES 
 start
 @after {System.out.println("HALT\n");}
-	: calcul fin_instruction {System.out.println($calcul.code);}
+	: (calcul fin_instruction {System.out.println($calcul.code);})+
 ;
 
 calcul returns [String code]
-	: (nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";})+
-	| (bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";})+
+	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
+	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
 //	| declaration fin_instruction {$code = $declaration.code;}
 //	| equation {}
 ;
 
-fin_instruction : 
-	(EOF | NEWLINE	| ';')+
+fin_instruction
+	: EOF
+	| NEWLINE
+	| ';'
 ;
 
 nexpr returns [String code]
-@init{$code = new String();}
 // TODO: pow
 	: LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
@@ -29,7 +30,6 @@ nexpr returns [String code]
 ;
 
 bexpr returns [String code]
-@init{$code = new String();}
 // TODO: implication, lazy or
 	: LPAR a=bexpr RPAR {$code = $a.code;}
 	| NOT a=bexpr {$code = "PUSHI 1\n" + $a.code + "SUB\n";}
@@ -51,6 +51,8 @@ WS 		: (' '|'\t')+ -> skip;
 
 LPAR	: '(';
 RPAR	: ')';
+LACC	: '{';
+RACC	: '}';
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
