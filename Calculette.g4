@@ -7,7 +7,6 @@ start
 ;
 
 calcul returns [String code]
-@init{$code = new String();}
 	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
 	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
 //	| declaration fin_instruction {$code = $declaration.code;}
@@ -21,6 +20,7 @@ fin_instruction
 ;
 
 nexpr returns [String code]
+@init{$code = new String();}
 // TODO: pow
 	: LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
@@ -31,6 +31,7 @@ nexpr returns [String code]
 ;
 
 bexpr returns [String code]
+@init{$code = new String();}
 // TODO: implication, lazy or
 	: LPAR a=bexpr RPAR {$code = $a.code;}
 	| NOT a=bexpr {$code = "PUSHI 1\n" + $a.code + "SUB\n";}
@@ -41,7 +42,7 @@ bexpr returns [String code]
 ;
 
 /*declaration returns [String code]
-#@init{$code = new String();}
+@init{$code = new String();}
 	: TYPE ID {}
 ;
 */
