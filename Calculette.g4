@@ -10,17 +10,16 @@ calcul returns [String code]
 	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
 	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
 //	| declaration fin_instruction {$code = $declaration.code;}
+//	| equation {}
 ;
 
-fin_instruction
-	: EOF
-	| NEWLINE
-	| ';'
+fin_instruction : 
+	(EOF | NEWLINE	| ';')+
 ;
 
 nexpr returns [String code]
 @init{$code = new String();}
-// TODO: pow, gt, lt, eq...
+// TODO: pow
 	: LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
 	| a=nexpr MINUS b=nexpr {$code=$a.code + $b.code + $MINUS.getText();}
