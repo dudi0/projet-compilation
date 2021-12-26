@@ -22,9 +22,9 @@ nexpr returns [String code]
 // TODO: pow, gt, lt, eq...
 	: LPAR a=nexpr RPAR {$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
-	| a=nexpr '-' b=nexpr {$code=$a.code + $b.code + "SUB\n";}
+	| a=nexpr MINUS b=nexpr {$code=$a.code + $b.code + "SUB\n";}
 	| a=nexpr '+' b=nexpr {$code=$a.code + $b.code + "ADD\n";}
-	| '-' INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
+	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
 
