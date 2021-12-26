@@ -21,9 +21,9 @@ nexpr returns [String code]
 @init{$code = new String();}
 // TODO: pow, gt, lt, eq...
 	: LPAR a=nexpr RPAR {$code = $a.code;}
-	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText() + "\n";}
-	| a=nexpr MINUS b=nexpr {$code=$a.code + $b.code + "SUB\n";}
-	| a=nexpr '+' b=nexpr {$code=$a.code + $b.code + "ADD\n";}
+	| a=nexpr MUL_OP b=nexpr {$code=$a.code + $b.code + $MUL_OP.getText();}
+	| a=nexpr MINUS b=nexpr {$code=$a.code + $b.code + $MINUS.getText();}
+	| a=nexpr ADD b=nexpr {$code=$a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT {$code = $code + "PUSHI " + $INT.int + "\n";}
 ;
@@ -55,10 +55,10 @@ RPAR	: ')';
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 
-MINUS 	: '-';
+MINUS 	: '-' {setText("SUB\n");};
 
-ADD_OP 	: '-' {setText("SUB");} | '+' {setText("ADD");};
-MUL_OP 	: '*' {setText("MUL");} | '/' {setText("DIV");};
+ADD 	: '+' {setText("ADD\n");};
+MUL_OP 	: '*' {setText("MUL\n");} | '/' {setText("DIV\n");};
 
 BOOL 	: 'true' {setText("1");} | 'false' {setText("0");};
 AND 	: 'and';
