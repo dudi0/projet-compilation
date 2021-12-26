@@ -3,12 +3,12 @@ grammar Calculette;
 // REGLES 
 start
 @after {System.out.println("HALT\n");}
-	: (calcul fin_instruction {System.out.println($calcul.code);})+
+	: (calcul fin_instruction {System.out.println($calcul.code + "WRITE\n" + "POP\n");})+
 ;
 
 calcul returns [String code]
-	: nexpr NEWLINE {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
-	| bexpr NEWLINE {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
+	: nexpr {$code = $nexpr.code;}
+	| bexpr {$code = $bexpr.code;}
 //	| declaration fin_instruction {$code = $declaration.code;}
 ;
 
