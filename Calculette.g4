@@ -37,7 +37,7 @@ bexpr returns [String code]
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| a=nexpr OP_BOOL b=nexpr	{}
+	| a=nexpr OP_BOOL b=nexpr	{$code = $a.code + $b.code + $OP_BOOL.getText();}
 	//| a=bexpr '->' b=bexpr {}
 	| BOOL {$code += "PUSHI " + $BOOL.getText();}
 ;
@@ -70,7 +70,7 @@ OR 		: 'or' ;
 NOT 	: 'not' ;
 OP_BOOL 
 	: '=='	{setText("EQUAL\n");}
-	| '!='	{setText("NEQ\n");}
+	| '<>'	{setText("NEQ\n");}
 	| '>' 	{setText("SUP\n");}
 	| '<' 	{setText("INF\n");}
 	| '>='	{setText("SUPEQ\n");}
