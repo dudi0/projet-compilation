@@ -7,8 +7,8 @@ start
 ;
 
 calcul returns [String code]
-	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
-	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
+	: nexpr NEWLINE {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
+	| bexpr NEWLINE {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
 //	| declaration fin_instruction {$code = $declaration.code;}
 ;
 
