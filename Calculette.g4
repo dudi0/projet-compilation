@@ -14,7 +14,7 @@ calcul returns [String code]
 
 fin_instruction
 	: EOF
-	| '\n'
+	| NEWLINE
 	| ';'
 ;
 
