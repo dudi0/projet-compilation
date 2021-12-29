@@ -4,7 +4,7 @@ grammar Calculette;
 start returns [String code]
 @init{$code = new String();}
 @after {System.out.println("HALT\n");}
-	: (calcul EOF {System.out.println($calcul.code);})+
+	: (calcul fin_instruction+ {System.out.println($calcul.code);})+ EOF
 ;
 
 calcul returns [String code]
@@ -30,13 +30,11 @@ nexpr returns [String code]
 ;
 
 bexpr returns [String code]
-// TODO: implication, lazy or
 	: LPAR a=bexpr RPAR 		{$code = $a.code;}
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| c=nexpr COMP d=nexpr	{$code = $c.code + $d.code + $COMP.getText();}
-	//| a=bexpr '->' b=bexpr {}
 	| BOOL {$code += "PUSHI " + $BOOL.getText();}
 ;
 
@@ -47,7 +45,7 @@ bexpr returns [String code]
 */
 
 // LEXER
-NEWLINE : '\r'? '\n' -> skip;
+NEWLINE : '\r'? '\n';
 WS 		: (' '|'\t')+ -> skip;
 
 LPAR	: '(';
