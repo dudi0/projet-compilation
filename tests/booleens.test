@@ -1,65 +1,42 @@
-true or true
+print(true and false or true and not true)
+
+==out==
+0
+
+-----
+print(true or false and false)
 
 ==out==
 1
 
 -----
-true or false and false
+print(true or (false or false))
 
 ==out==
 1
 
 -----
-true or (false or false)
+print(false or (true and not false))
 
 ==out==
 1
 
 -----
-false or (true and not false)
+print((not true and false) or (true and not false))
 
 ==out==
 1
 
 -----
-(not true and false) or (true and not false)
-
-==out==
-1
-
------
-true and false or true and not true;
-true or false and false;
-true or (false or false);
-false or (true and not false);
-(not true and false) or (true and not false);
+print(true and false or true and not true)
+print(true or false and false)
+print(true or (false or false))
+print(false or (true and not false))
+print((not true and false) or (true and not false))
 
 ==out==
 0
 1
 1
-1
-1
-
------
-false or not (true and not 42 == 42);
-false or 42 <= 40;
-false or (5*6*7*11 + 2)/11*5-1008 <= 5*8+2*-1/-1;
-50 <>  51;
-42+1+2+-3 <> 5*8+2*-1/-1;
-(5*6*7*11 + 2)/11/5 < (5*6*7*11 + 2)/(11/5)-1114;
-(5*6*7*11 + 2)/11/5 <= (5*6*7*11 + 2)/(11/5)-1114;
-5*8+2*1 > 6*4/5+38;
-5*8+2*1 >= 6*4/5+38;
-42 == (5*6*7*11 + 2)/11/5;
-==out==
-1
-0
-1
-1
-0
-0
-1
-0
 1
 1

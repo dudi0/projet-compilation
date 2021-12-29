@@ -25,27 +25,17 @@ function execMVAP () {
 
 
 function mvap () {
-    cd .
+    # Utilisation :
+    # mvap 'expression' -> évalue une expression
+    # mvap -f fichier.txt -> évalue un fichier
 
-    initialisation
+    init_mvap
 
-    antlr4 Calculette.g4                
-    javac *.java
-
-    expr="$1"
-
-    echo "$expr" | grun Calculette 'start' > fichier.mvap
-
-    compileMVAP fichier.mvap
-
-    execMVAP fichier.mvap.cbap
+    mvap_sans_init "$@"
 }
-
 
 function init_mvap () {
     # Effectue l'initialisation nécessaire à la fonction `mvap_sans_init`
-    cd .
-
     initialisation
 
     antlr4 Calculette.g4                
@@ -54,38 +44,60 @@ function init_mvap () {
 
 
 function mvap_sans_init () {
+    # Utilisation :
+    # mvap_sans_init 'expression' -> évalue une expression
+    # mvap_sans_init -f fichier.txt -> évalue un fichier
+    #
+    # Différence :
     # Idem que mvap, mais ici on ne compile pas avec antlr4 et javac
     # On considère donc que l'initialisation des fichiers de la
     # grammaire a déjà été effectuée.
-    cd .
+    
+    if [ "$1" = "-f" ]; then ## si c'est un fichier
+        nom_fichier="$2"
+        cat "$nom_fichier" | grun Calculette 'start' > fichier.mvap
+    else        
+        expression="$1"
+        echo "$expression" > entree.temp
 
-    expr="$1"
-
-    echo "$expr" | grun Calculette 'start' > fichier.mvap
+        cat entree.temp | grun Calculette 'start' > fichier.mvap
+        rm entree.temp
+    fi
 
     compileMVAP fichier.mvap
-
     execMVAP fichier.mvap.cbap
 }
 
 
 function mvap_debug () {
-    # Mode debug pour grun (option `-tokens`)
-    # Mode debug pour mvap (option `-d`)
-    cd .
+    # Utilisation :
+    # mvap_debug 'expression' -> évalue une expression
+    # mvap_debug -f fichier.txt -> évalue un fichier
+    #
+    # Différences :
+    # - Mode debug pour grun (option `-tokens`)
+    # - Mode debug pour mvap (option `-d`)
 
-    initialisation
-
-    antlr4 Calculette.g4                
-    javac *.java
+    init_mvap
 
     expr="$1"
 
-    echo "$expr" | grun Calculette 'start' -tokens
-    echo "$expr" | grun Calculette 'start' > fichier.mvap
+    if [ "$1" = "-f" ]; then ## si c'est un fichier
+        nom_fichier="$2"
+
+        cat "$nom_fichier" | grun Calculette 'start' -tokens
+        cat "$nom_fichier" | grun Calculette 'start' > fichier.mvap
+    else        
+        expression="$1"
+        echo "$expression" > entree.temp
+
+        cat entree.temp | grun Calculette 'start' -tokens
+        cat entree.temp | grun Calculette 'start' > fichier.mvap
+
+        rm entree.temp
+    fi
 
     compileMVAP fichier.mvap
-
     execMVAP fichier.mvap.cbap -d
 }
 
@@ -102,12 +114,11 @@ function test_expr () {
 
     resultat=$(mvap_sans_init "$expr" | xargs) # xargs trims whitespace
 
-    if [ "$resultat" = "$resultat_attendu" ]
-    then
-    echo "✅ $expr = $resultat"
+    if [ "$resultat" = "$resultat_attendu" ]; then
+        echo "✅ $expr = $resultat"
     else
-    echo "❌ $expr = $resultat   (!= $resultat_attendu)"      
-    let "nb_tests_faux+=1"
+        echo "❌ $expr = $resultat   (!= $resultat_attendu)"      
+        let "nb_tests_faux+=1"
     fi
 }
 
@@ -120,9 +131,8 @@ function affiche_bilan () {
     echo "✅ Il y a $(( nb_tests - nb_tests_faux )) tests passés avec succès."  
 
 
-    if (( $nb_tests_faux > 0 ))
-    then
-    echo "❌ Il y a $nb_tests_faux tests faux."  
-    exit 42
+    if (( $nb_tests_faux > 0 )); then
+        echo "❌ Il y a $nb_tests_faux tests faux."  
+        exit 42
     fi
 }

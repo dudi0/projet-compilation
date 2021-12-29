@@ -2,6 +2,7 @@ grammar Calculette;
 
 // REGLES 
 start
+@init{$code = new String();}
 @after {System.out.println("HALT\n");}
 	: (calcul fin_instruction {System.out.println($calcul.code);})+
 ;
@@ -20,7 +21,6 @@ fin_instruction
 ;
 
 nexpr returns [String code]
-@init{$code = new String();}
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr 	{$code=$a.code + $b.code + $MUL_OP.getText();}
@@ -31,13 +31,12 @@ nexpr returns [String code]
 ;
 
 bexpr returns [String code]
-@init{$code = new String();}
 // TODO: implication, lazy or
 	: LPAR a=bexpr RPAR 		{$code = $a.code;}
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| c=nexpr OP_BOOL d=nexpr	{$code = $c.code + $d.code + $OP_BOOL.getText();}
+	| c=nexpr COMP d=nexpr	{$code = $c.code + $d.code + $OP_BOOL.getText();}
 	//| a=bexpr '->' b=bexpr {}
 	| BOOL {$code += "PUSHI " + $BOOL.getText();}
 ;
@@ -68,7 +67,7 @@ BOOL 	: 'true' {setText("1\n");} | 'false' {setText("0\n");};
 AND 	: 'and';
 OR 		: 'or' ;
 NOT 	: 'not' ;
-OP_BOOL 
+COMP 
 	: '=='	{setText("EQUAL\n");}
 	| '<>'	{setText("NEQ\n");}
 	| '>' 	{setText("SUP\n");}
