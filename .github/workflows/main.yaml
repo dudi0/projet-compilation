@@ -2,7 +2,7 @@ name: CI
 on:  push
 jobs:
   test-code:
-    name: Teste Calculette.g4
+    name: Test Calculette.g4
     runs-on: ubuntu-latest
         
     steps:    
