@@ -1,7 +1,7 @@
 grammar Calculette;
 
 // REGLES 
-start
+start returns [String code]
 @init{$code = new String();}
 @after {System.out.println("HALT\n");}
 	: (calcul fin_instruction {System.out.println($calcul.code);})+
