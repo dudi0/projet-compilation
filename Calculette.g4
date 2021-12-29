@@ -4,7 +4,7 @@ grammar Calculette;
 start returns [String code]
 @init{$code = new String();}
 @after {System.out.println("HALT\n");}
-	: (calcul fin_instruction {System.out.println($calcul.code);})+
+	: (calcul EOF {System.out.println($calcul.code);})+
 ;
 
 calcul returns [String code]
@@ -15,8 +15,7 @@ calcul returns [String code]
 ;
 
 fin_instruction
-	: EOF
-	| NEWLINE
+	: NEWLINE
 	| ';'
 ;
 
