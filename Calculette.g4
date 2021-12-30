@@ -1,6 +1,6 @@
 grammar Calculette;
 
-// REGLES 
+// REGLES
 start returns [String code]
 @init{$code = new String();}
 @after {System.out.println("HALT\n");}
