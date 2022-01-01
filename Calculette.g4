@@ -37,7 +37,7 @@ nexpr returns [String code]
 	| a=nexpr ADD b=nexpr 		{$code=$a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
-	| ID 		{$code = "PUSHG " + variables.get($ID.getText()) + "\n";}
+	| ID 		{$code = "PUSHG " + variables.get($ID.text) + "\n";}
 ;
 
 bexpr returns [String code]
@@ -47,13 +47,13 @@ bexpr returns [String code]
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
 	| BOOL 	{$code += "PUSHI " + $BOOL.getText();}
-	| ID 	{$code = "PUSHG " + variables.get($ID.getText()) + "\n";}
+	| ID 	{$code = "PUSHG " + variables.get($ID.text) + "\n";}
 ;
 
 declaration returns [String code]
 	: TYPE ID (EQUAL nexpr | bexpr)
 	{
-		variables.put($ID.text());
+		variables.put($ID.text);
 		var_len++;
 		$code = "PUSHI 0\n";
 	}
@@ -64,7 +64,7 @@ affectation returns [String code]
 	: ID EQUAL expr
 	{
 		$code = $expr.code;
-		$code += "STOREG" + variables.get($ID.text());
+		$code += "STOREG" + variables.get($ID.text);
 	}
 ;
 
