@@ -13,9 +13,9 @@ grammar Calculette;
 start returns [String code]
 @init{$code = new String();}
 @after {System.out.println("HALT\n");}
-	: (declaration fin_instruction+ {$code = $declaration.code;})*
-	  (affectation fin_instruction+ {$code = $affectation.code;})*
-	  (expr fin_instruction+ {$code = $expr.code+ "WRITE\n" + "POP\n";})* EOF
+	: (declaration fin_instruction+ {$code += $declaration.code;})*
+	  //(affectation fin_instruction+ {$code = $affectation.code;})*
+	  (expr fin_instruction+ {$code += $expr.code+ "WRITE\n" + "POP\n";})* EOF
 ;
 
 fin_instruction
