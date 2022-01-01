@@ -52,7 +52,7 @@ bexpr returns [String code]
 
 declaration returns [String code]
 	: TYPE ID (EQUAL nexpr | bexpr){
-		variables.put($ID.text,var_len);
+		variables.put($ID.text, var_len);
 		var_len++;
 		$code = "PUSHI 0\n";
 	}
@@ -60,9 +60,9 @@ declaration returns [String code]
 ;
 
 affectation returns [String code]
-	: a=ID EQUAL expr{
+	: ID EQUAL expr{
 		$code = $expr.code;
-		$code += "STOREG" + variables.get($ID.text);
+		$code += "STOREG " + variables.get($ID.text);
 	}
 ;
 
