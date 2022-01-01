@@ -1,5 +1,7 @@
 grammar Calculette;
-
+@header {
+	import java.util.HashMap;
+}
 @members { 
 	HashMap<String, Integer> variables = new HashMap<String, Integer>();
 	int var_len = 0;
@@ -53,7 +55,7 @@ declaration returns [String code]
 	{
 		variable.put($ID.getText());
 		var_len++;
-		//pushi O ?
+		$code = "PUSHI 0\n";
 	}
 	| TYPE affectation
 ;
