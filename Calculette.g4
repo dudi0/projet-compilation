@@ -67,8 +67,7 @@ affectation returns [String code]
 ;
 
 // LEXER
-CR 		: '\r'? -> skip;
-NEWLINE : '\n';
+NEWLINE : '\r'? '\n';
 WS 		: (' '|'\t')+ -> skip;
 
 LPAR	: '(';
