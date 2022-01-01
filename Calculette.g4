@@ -53,7 +53,7 @@ bexpr returns [String code]
 declaration returns [String code]
 	: TYPE ID (EQUAL nexpr | bexpr)
 	{
-		variable.put($ID.getText());
+		variables.put($ID.getText());
 		var_len++;
 		$code = "PUSHI 0\n";
 	}
