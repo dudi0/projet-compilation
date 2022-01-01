@@ -1,7 +1,9 @@
 grammar Calculette;
+
 @header {
 	import java.util.HashMap;
 }
+
 @members { 
 	HashMap<String, Integer> variables = new HashMap<String, Integer>();
 	int var_len = 0;
@@ -15,9 +17,9 @@ start returns [String code]
 ;
 
 calcul returns [String code]
-	//: (declaration fin_instruction {$code = $declaration.code;})*
-	//  (affectation fin_instruction {$code = $affectation.code;})*
-	:  (expr {$code = $expr.code+ "WRITE\n" + "POP\n";})*
+	: (declaration fin_instruction {$code = $declaration.code;})*
+	  (affectation fin_instruction {$code = $affectation.code;})*
+	  (expr {$code = $expr.code+ "WRITE\n" + "POP\n";})*
 ;
 
 fin_instruction
@@ -75,6 +77,10 @@ RPAR	: ')';
 LACC	: '{';
 RACC	: '}';
 
+TYPE 	: 'int' | 'float' | 'bool';
+ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
+EQUAL	: '=';
+
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
 
@@ -95,10 +101,6 @@ COMP
 	| '<='	{setText("INFEQ\n");}
 ;
 
-TYPE 	: 'int' | 'float' | 'bool';
-ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
-EQUAL	: '=';
-
 COMMENT : '/*' .*? '*/' -> skip;
-NULL	: 'null' ->skip;
+
 UNMATCH : . -> skip;
