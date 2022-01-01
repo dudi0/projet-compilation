@@ -15,9 +15,9 @@ start returns [String code]
 ;
 
 calcul returns [String code]
-	: (declaration fin_instruction {$code = $declaration.code;})*
-	  (affectation fin_instruction {$code = $affectation.code;})*
-	  (expr fin_instruction {$code = $expr.code+ "WRITE\n" + "POP\n";})*
+	//: (declaration fin_instruction {$code = $declaration.code;})*
+	//  (affectation fin_instruction {$code = $affectation.code;})*
+	:  (expr fin_instruction {$code = $expr.code+ "WRITE\n" + "POP\n";})*
 ;
 
 fin_instruction
