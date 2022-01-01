@@ -1,5 +1,10 @@
 grammar Calculette;
 
+@members { 
+	HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	int var_len = 0;
+}
+
 // REGLES
 start returns [String code]
 @init{$code = new String();}
@@ -8,10 +13,9 @@ start returns [String code]
 ;
 
 calcul returns [String code]
-	: nexpr {$code = $nexpr.code+ "WRITE\n" + "POP\n";}
-	| bexpr {$code = $bexpr.code+ "WRITE\n" + "POP\n";}
-//	| declaration fin_instruction {$code = $declaration.code;}
-//	| equation {}
+	: (declaration fin_instruction {$code = $declaration.code;})*
+	  (affectation fin_instruction {$code = $affectation.code;})*
+	  (expr fin_instruction {$code = $expr.code+ "WRITE\n" + "POP\n";})*
 ;
 
 fin_instruction
@@ -19,6 +23,10 @@ fin_instruction
 	| ';'
 ;
 
+expr returns [String code]
+	: nexpr {$code = $nexpr.code;}
+	| bexpr {$code = $bexpr.code;}
+;
 nexpr returns [String code]
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
@@ -27,6 +35,7 @@ nexpr returns [String code]
 	| a=nexpr ADD b=nexpr 		{$code=$a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
+	| ID 		{$code = "PUSHG " + variables.get($ID.getText()) + "\n";}
 ;
 
 bexpr returns [String code]
@@ -34,18 +43,32 @@ bexpr returns [String code]
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| c=nexpr COMP d=nexpr	{$code = $c.code + $d.code + $COMP.getText();}
-	| BOOL {$code += "PUSHI " + $BOOL.getText();}
+	| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
+	| BOOL 	{$code += "PUSHI " + $BOOL.getText();}
+	| ID 	{$code = "PUSHG " + variables.get($ID.getText()) + "\n";}
 ;
 
-/*declaration returns [String code]
-@init{$code = new String();}
-	: TYPE ID (EQUAL VALUE){}
+declaration returns [String code]
+	: TYPE ID (EQUAL nexpr | bexpr)
+	{
+		variable.put($ID.getText());
+		var_len++;
+		//pushi O ?
+	}
+	| TYPE affectation
 ;
-*/
+
+affectation returns [String code]
+	: ID EQUAL expr
+	{
+		$code = $expr.code;
+		$code += "STOREG" + variables.get($ID);
+	}
+;
 
 // LEXER
-NEWLINE : '\r'? '\n';
+CR 		: '\r'? -> skip;
+NEWLINE : '\n';
 WS 		: (' '|'\t')+ -> skip;
 
 LPAR	: '(';
@@ -76,5 +99,7 @@ COMP
 TYPE 	: 'int' | 'float' | 'bool';
 ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
 EQUAL	: '=';
+
+COMMENT : '/*' .*? '*/' -> skip;
 
 UNMATCH : . -> skip;
