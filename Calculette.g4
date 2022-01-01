@@ -100,5 +100,5 @@ ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
 EQUAL	: '=';
 
 COMMENT : '/*' .*? '*/' -> skip;
-
+NULL	: 'null' ->skip;
 UNMATCH : . -> skip;
