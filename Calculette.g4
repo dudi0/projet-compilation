@@ -64,7 +64,7 @@ affectation returns [String code]
 	: ID EQUAL expr
 	{
 		$code = $expr.code;
-		$code += "STOREG" + variables.get($ID);
+		$code += "STOREG" + variables.get($ID.text());
 	}
 ;
 
