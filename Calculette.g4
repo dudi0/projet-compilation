@@ -12,7 +12,7 @@ grammar Calculette;
 // REGLES
 start returns [String code]
 @init{$code = new String();}
-@after {System.out.println($code + "HALT\n" + "WRITE\n" + "POP\n");}
+@after {System.out.println($code + "WRITE\n" + "POP\n" + "HALT\n");}
 	: //(declaration fin_instruction+ {$code += $declaration.code + "WRITE\n" + "POP\n";})*
 	  //(affectation fin_instruction+ {$code = $affectation.code;})*
 	  (expr fin_instruction+ {$code += $expr.code;})* EOF
@@ -30,9 +30,9 @@ expr returns [String code]
 nexpr returns [String code]
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
-	| a=nexpr MUL_OP b=nexpr 	{$code=$a.code + $b.code + $MUL_OP.getText();}
-	| a=nexpr MINUS b=nexpr 	{$code=$a.code + $b.code + $MINUS.getText();}
-	| a=nexpr ADD b=nexpr 		{$code=$a.code + $b.code + $ADD.getText();}
+	| a=nexpr MUL_OP b=nexpr 	{$code = $a.code + $b.code + $MUL_OP.getText();}
+	| a=nexpr MINUS b=nexpr 	{$code = $a.code + $b.code + $MINUS.getText();}
+	| a=nexpr ADD b=nexpr 		{$code = $a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
 	| ID 		{$code = "PUSHG " + variables.get($ID.text) + "\n";}
@@ -44,7 +44,7 @@ bexpr returns [String code]
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
-	| BOOL 	{$code += "PUSHI " + $BOOL.getText();}
+	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + variables.get($ID.text) + "\n";}
 ;
 
