@@ -12,10 +12,10 @@ grammar Calculette;
 // REGLES
 start returns [String code]
 @init{$code = new String();}
-@after {System.out.println("HALT\n");}
-	: (declaration fin_instruction+ {$code += $declaration.code + "WRITE\n" + "POP\n";})*
+@after {System.out.println("HALT\n" + "WRITE\n" + "POP\n"");}
+	: //(declaration fin_instruction+ {$code += $declaration.code + "WRITE\n" + "POP\n";})*
 	  //(affectation fin_instruction+ {$code = $affectation.code;})*
-	  (expr fin_instruction+ {$code += $expr.code + "WRITE\n" + "POP\n";})* EOF
+	  (expr fin_instruction+ {$code += $expr.code;})* EOF
 ;
 
 fin_instruction
