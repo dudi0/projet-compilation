@@ -41,13 +41,15 @@ nexpr returns [String code]
 bexpr returns [String code]
 	: LPAR a=bexpr RPAR 		{$code = $a.code;}
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
-	//| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + variables.get($ID.text) + "\n";}
 ;
 
+comparaison returns [String code]
+    : a=expr COMP b=expr {$code = $c.code + $d.code + $COMP.getText() + "\n";}
+;
 declaration returns [String code]
 	: TYPE ID (EQUAL nexpr | bexpr){
 		variables.put($ID.text, var_len);
@@ -73,8 +75,6 @@ RPAR	: ')';
 LACC	: '{';
 RACC	: '}';
 
-TYPE 	: 'int' | 'float' | 'bool';
-ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
 EQUAL	: '=';
 
 INT 	: [0-9]+;
@@ -96,6 +96,10 @@ COMP
 	| '>='	{setText("SUPEQ\n");}
 	| '<='	{setText("INFEQ\n");}
 ;
+
+TYPE 	: 'int' | 'float' | 'bool';
+ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
+
 
 COMMENT : '/*' .*? '*/' -> skip;
 
