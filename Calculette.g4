@@ -41,9 +41,9 @@ nexpr returns [String code]
 bexpr returns [String code]
 	: LPAR a=bexpr RPAR 		{$code = $a.code;}
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
+	| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| c=nexpr COMP d=nexpr		{$code = $c.code + $d.code + $COMP.getText() + "\n";}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + variables.get($ID.text) + "\n";}
 ;
