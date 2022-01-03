@@ -15,7 +15,6 @@ start returns [String code]
 @init{int i; $code = new String();}
 @after{ for(i = 0; i < var_len; i++) {$code += "POP\n";}
 		$code += "HALT\n";
-		System.out.println(memory);
 		System.out.println($code);}
 	: (declaration fin_instruction+ {$code += $declaration.code;})*
 	  (instruction fin_instruction+ {$code += $instruction.code;})* 
@@ -34,8 +33,8 @@ instruction returns [String code]
 ;
 
 fin_instruction
-	: NEWLINE
-	| ';'
+	: SEMICOLON
+    | NEWLINE
 ;
 
 expr returns [String code]
@@ -63,11 +62,11 @@ bexpr returns [String code]
 	| ID 	{$code = "PUSHG " + memory.get($ID.text) + "\n";}
 ;
 
-/*comparaison returns [String code]
+comparaison returns [String code]
     : a=expr COMP b=expr {$code = $a.code + $b.code + $COMP.getText();}
     | NOT comparaison {$code = "PUSHI 1\n" + $comparaison.code + "SUB\n";}
     | bexpr {$code = $bexpr.code;}
-;*/
+;
 
 declaration returns [String code]
 	: TYPE ID {
@@ -86,7 +85,7 @@ assignation returns [String code]
 
 afficher returns [String code]
 	: PRINT LPAR expr RPAR {$code = $expr.code + "WRITE\n" + "POP\n";}
-	//| PRINT LPAR comparaison RPAR {$code = $comparaison.code + "WRITE\n" + "POP\n";}
+	| PRINT LPAR comparaison RPAR {$code = $comparaison.code + "WRITE\n" + "POP\n";}
 ;
 
 bloc returns [String code]
@@ -117,6 +116,8 @@ if_instr returns [String code]
 // LEXER
 NEWLINE : '\r'? '\n';
 WS 		: (' '|'\t')+ -> skip;
+
+SEMICOLON : ';';
 
 LPAR	: '(';
 RPAR	: ')';
