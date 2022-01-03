@@ -15,9 +15,9 @@ A sort of devlog des 4 derniers jours avant le rendu du projet, une initiative p
 
 
 ## TODO list :
+- fix comparaison
 - fix if
 - if/else
-- fix comparaison
 - do while
 - distinction des types
 - pow
