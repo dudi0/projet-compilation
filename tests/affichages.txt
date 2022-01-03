@@ -8,9 +8,13 @@ xy=x-y
 afficher(xy)
 xy=x+42
 afficher(xy)
-lire(z)
+/*lire(z)
 afficher(x)
 x=x*z
 afficher(x)
 afficher(z)
-afficher(x*z)
+afficher(x*z)*/
+
+==out==
+0
+84

@@ -4,7 +4,9 @@ int z;
 x = 42
 y = 142
 z = 242
-print(x, y, z)
+print(x)
+print(y)
+print(z)
 
 ==out==
 42
