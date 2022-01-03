@@ -1,0 +1,12 @@
+int u
+int e
+int za
+e=0
+lire(u)
+lire(za)
+
+si (za < u) afficher(u)  
+sinon {
+   si (za > u) afficher(za)
+   sinon afficher(e)
+}

@@ -1,0 +1,9 @@
+int u
+int za
+u = 1
+za = 42
+si (za > u) {
+ u = u+1
+ afficher(u)
+ }
+sinon afficher(za)

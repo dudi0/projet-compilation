@@ -1,0 +1,6 @@
+int i
+i = 0
+repeter i = i + 2
+tantque ( false or i <= 40)
+
+afficher(i)

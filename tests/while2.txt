@@ -1,0 +1,22 @@
+int y
+int za
+int x
+int endthen
+int endelse
+endthen = 0
+endelse = 0
+lire(x)
+lire(y)
+lire(za)
+repeter {
+  afficher(y)
+  endthen=1
+} tantque (x == 0 and endthen == 0)
+
+repeter {
+  afficher(za)
+  endelse=2
+} tantque (x<> 0 and endelse == 0)
+
+afficher(endthen)
+afficher(endelse)
