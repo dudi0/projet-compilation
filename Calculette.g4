@@ -5,17 +5,32 @@ grammar Calculette;
 }
 
 @members { 
-	HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	HashMap<String, Integer> memory = new HashMap<String, Integer>();
 	int var_len = 0;
+	int label = 0;
 }
 
 // REGLES
 start returns [String code]
-@init{$code = new String();}
-@after {System.out.println($code + "WRITE\n" + "POP\n" + "HALT\n");}
-	: //(declaration fin_instruction+ {$code += $declaration.code + "WRITE\n" + "POP\n";})*
-	  //(affectation fin_instruction+ {$code = $affectation.code;})*
-	  (expr fin_instruction+ {$code += $expr.code;})* EOF
+@init{int i; $code = new String();}
+@after{ for(i = 0; i < var_len; i++) {$code += "POP\n";}
+		$code += "HALT\n";
+		System.out.println(memory);
+		System.out.println($code);}
+	: (declaration fin_instruction+ {$code += $declaration.code;})*
+	  (instruction fin_instruction+ {$code += $instruction.code;})* 
+	  //(comparaison fin_instruction+ {$code += $comparaison.code + "POP\n";})*
+	  (if_instr fin_instruction+ 	{$code += $if_instr.code;})* 
+	  EOF
+;
+
+instruction returns [String code]
+	: assignation 	{$code = $assignation.code;}
+	| expr 			{$code = $expr.code + "POP\n";}
+	| afficher 		{$code = $afficher.code;}
+	//| comparaison 	{$code = $comparaison.code + "POP\n";}
+	/////| if_instr		{$code=$if_instr.code;}
+	//| while_instr{}
 ;
 
 fin_instruction
@@ -25,17 +40,18 @@ fin_instruction
 
 expr returns [String code]
 	: nexpr {$code = $nexpr.code;}
-	| bexpr {$code = $bexpr.code;}
+	| bexpr {$code = $bexpr.code;}	
 ;
+
 nexpr returns [String code]
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
 	| a=nexpr MUL_OP b=nexpr 	{$code = $a.code + $b.code + $MUL_OP.getText();}
 	| a=nexpr MINUS b=nexpr 	{$code = $a.code + $b.code + $MINUS.getText();}
 	| a=nexpr ADD b=nexpr 		{$code = $a.code + $b.code + $ADD.getText();}
-	| MINUS INT {$code = $code + "PUSHI "+ "-" + $INT.int + "\n";} 
-	| INT 		{$code = $code + "PUSHI " + $INT.int + "\n";}
-	| ID 		{$code = "PUSHG " + variables.get($ID.text) + "\n";}
+	| MINUS INT {$code = "PUSHI "+ "-" + $INT.int + "\n";} 
+	| INT 		{$code = "PUSHI " + $INT.int + "\n";}
+	| ID 		{$code = "PUSHG " + memory.get($ID.text) + "\n";}
 ;
 
 bexpr returns [String code]
@@ -44,27 +60,59 @@ bexpr returns [String code]
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
-	| ID 	{$code = "PUSHG " + variables.get($ID.text) + "\n";}
+	| ID 	{$code = "PUSHG " + memory.get($ID.text) + "\n";}
 ;
 
-comparaison returns [String code]
-    : a=expr COMP b=expr {$code = $c.code + $d.code + $COMP.getText() + "\n";}
-;
+/*comparaison returns [String code]
+    : a=expr COMP b=expr {$code = $a.code + $b.code + $COMP.getText();}
+    | NOT comparaison {$code = "PUSHI 1\n" + $comparaison.code + "SUB\n";}
+    | bexpr {$code = $bexpr.code;}
+;*/
+
 declaration returns [String code]
-	: TYPE ID (EQUAL nexpr | bexpr){
-		variables.put($ID.text, var_len);
+	: TYPE ID {
+		memory.put($ID.text, var_len);
 		var_len++;
 		$code = "PUSHI 0\n";
 	}
-	| TYPE affectation
 ;
 
-affectation returns [String code]
-	: ID EQUAL expr{
+assignation returns [String code]
+	: ID EQ expr {
 		$code = $expr.code;
-		$code += "STOREG " + variables.get($ID.text);
+		$code += "STOREG " + memory.get($ID.text) + "\n";
 	}
 ;
+
+afficher returns [String code]
+	: PRINT LPAR expr RPAR {$code = $expr.code + "WRITE\n" + "POP\n";}
+	//| PRINT LPAR comparaison RPAR {$code = $comparaison.code + "WRITE\n" + "POP\n";}
+;
+
+bloc returns [String code]
+	: LACC NEWLINE+ 
+		(instruction {$code = $instruction.code;})+ NEWLINE+ 
+	  RACC 
+;
+
+if_instr returns [String code]
+	: IF LPAR bexpr RPAR {
+		$code = $bexpr.code;
+		$code += "JUMPF " + label + "\n";
+	  }
+	  (bloc {$code += $bloc.code;
+		$code += "LABEL " + label + "\n";
+	  	label++;
+	  }
+	  | instruction {
+		$code = $bexpr.code;
+		$code += "JUMPF " + label + "\n";
+	  	$code += $instruction.code;
+	  	$code += "LABEL " + label + "\n";
+	  	label++;
+	  })
+;
+
 
 // LEXER
 NEWLINE : '\r'? '\n';
@@ -75,7 +123,9 @@ RPAR	: ')';
 LACC	: '{';
 RACC	: '}';
 
-EQUAL	: '=';
+EQ		: '=';
+PRINT	: 'afficher' | 'print';
+IF		: 'si' | 'if';
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
@@ -99,7 +149,6 @@ COMP
 
 TYPE 	: 'int' | 'float' | 'bool';
 ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
-
 
 COMMENT : '/*' .*? '*/' -> skip;
 
