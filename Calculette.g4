@@ -2,13 +2,11 @@ grammar Calculette;
 
 @header {
 	import java.util.HashMap;
-	import java.util.Scanner;
 }
 
 @members { 
 	HashMap<String, Integer> var_value = new HashMap<String, Integer>();
 	HashMap<String, String> var_type = new HashMap<String, String>();
-	Scanner sc = new Scanner(System.in);
 	int var_len = 0;
 	int label = -1;
 }
@@ -30,9 +28,9 @@ instruction returns [String code]
 	| expr 			{$code = $expr.code + "POP\n";}
 	| afficher 		{$code = $afficher.code;}
 	| lire 			{$code = $lire.code;}
-	//| comparaison 	{$code = $comparaison.code + "POP\n";}
+	| comparaison 	{$code = $comparaison.code + "POP\n";}
 	| if_instr		{$code=$if_instr.code;}
-	//| while_instr{}
+	| while_instr{}
 ;
 
 fin_instruction
@@ -42,13 +40,12 @@ fin_instruction
 
 expr returns [String code]
 	: nexpr {$code = $nexpr.code;}
-	| bexpr {$code = $bexpr.code;}	
+	| bexpr {$code = $bexpr.code;}
 ;
 
 nexpr returns [String code]
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
-	| comparaison {$code = $comparaison.code;}
 	| a=nexpr MUL_OP b=nexpr 	{$code = $a.code + $b.code + $MUL_OP.getText();}
 	| a=nexpr MINUS b=nexpr 	{$code = $a.code + $b.code + $MINUS.getText();}
 	| a=nexpr ADD b=nexpr 		{$code = $a.code + $b.code + $ADD.getText();}
@@ -62,6 +59,7 @@ bexpr returns [String code]
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
+	//| comparaison {$code = $comparaison.code;}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + var_value.get($ID.text) + "\n";}
 ;
@@ -103,8 +101,7 @@ afficher returns [String code]
 
 lire returns [String code]
 	: READ LPAR ID RPAR {
-		int value = sc.nextInt();
-		$code = value +"\n";
+		$code = "READ\n";
 	 	$code += "STOREG " + var_value.get($ID.text) + "\n";
 	 }
 ;
@@ -147,6 +144,9 @@ if_instr returns [String code]
 	 NEWLINE*
 ;
 
+while_instr
+	:
+;
 
 // LEXER
 NEWLINE : '\r'? '\n';
