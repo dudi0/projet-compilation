@@ -7,15 +7,10 @@ A sort of devlog des 4 derniers jours avant le rendu du projet, une initiative p
 
 
 ## kessessé les soucis majeurs : 
-- comparaison : on ne peut comparer que des expressions booléennes ou que des expressions arithmétiques ensemble 
-Erreur que j'obtiens quand il y a comparaison dans bexpr: 
-```The following sets of rules are mutually left-recursive [expr, comparaison, nexpr]```
-`true or 42==42` ça marche po par exemple
 - types : on ne peut plus initialiser des trucs comme "int x = true" mais on peut toujours faire des opérations arithmétiques sur les booléens :rolling-eyes:
 
 ## TODO list :
 - distinction des types dans les opérations 
-- fix comparaison
 - do while
 - pow
  
@@ -23,7 +18,7 @@ Erreur que j'obtiens quand il y a comparaison dans bexpr:
 ## DONE list: 
 - expressions arithmétiques
 - expressions booléennes
-- comparaison (+/-)
+- comparaison 
 - afficher
 - déclaration de variables
 - assignation/utilisation de var
