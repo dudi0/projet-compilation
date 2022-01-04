@@ -6,7 +6,7 @@ A sort of devlog des 4 derniers jours avant le rendu du projet, une initiative p
 [edit: Un devlog implique des versions, et des dates, c'est plus une todo list, avec une done list pour se remonter le moral, et un endroit pour râler, je sais pas comment on appelle ça dans le jargon.]
 
 
-## kessessé les soucis majeur : 
+## kessessé les soucis majeurs : 
 - comparaison : on ne peut comparer que des expressions booléennes ou que des expressions arithmétiques ensemble 
 (doit surement se passer un truc dans bexpr, mais si j'y met comparaison ça me fait une récurrence à gauche)
 Erreur que j'obtiens quand il y a comparaison dans bexpr: 
