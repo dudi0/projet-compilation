@@ -59,15 +59,14 @@ bexpr returns [String code]
 	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	//| comparaison {$code = $comparaison.code;}
+	| comparaison {$code = $comparaison.code;}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + var_value.get($ID.text) + "\n";}
 ;
 
 comparaison returns [String code]
-    : a=expr COMP b=expr {$code = $a.code + $b.code + $COMP.getText();}
+    : a=nexpr COMP b=nexpr {$code = $a.code + $b.code + $COMP.getText();}
     | NOT comparaison {$code = "PUSHI 1\n" + $comparaison.code + "SUB\n";}
-    | bexpr {$code = $bexpr.code;}
 ;
 
 declaration returns [String code]
