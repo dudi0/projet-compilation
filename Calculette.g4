@@ -14,12 +14,11 @@ grammar Calculette;
 // REGLES
 start returns [String code]
 @init{int i; $code = new String();}
-@after{ for(i = 0; i < var_len; i++) {$code += "POP\n";}
+@after{	for(i = 0; i < var_len; i++) {$code += "POP\n";}
 		$code += "HALT\n";
 		System.out.println($code);}
 	: (declaration fin_instruction+ {$code += $declaration.code;})*
 	  (instruction fin_instruction+ {$code += $instruction.code;})* 
-	  //(comparaison fin_instruction+ {$code += $comparaison.code + "POP\n";})*
 	  EOF
 ;
 
