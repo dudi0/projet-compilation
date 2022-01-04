@@ -43,11 +43,11 @@ def add_tests(name, title):
 
 
 # ---------- Code ----------
-add_tests('expr_arithmetiques', 'Expressions Arithmétiques')
-add_tests('booleens', 'Booléens')
+#add_tests('expr_arithmetiques', 'Expressions Arithmétiques')
+#add_tests('booleens', 'Booléens')
 #add_tests('commentaires', 'Commentaires')
-add_tests('declarations', 'Déclarations')
+#add_tests('declarations', 'Déclarations')
 #add_tests('exposants', 'Exposants')
-add_tests('print', 'Print')
+#add_tests('print', 'Print')
 add_tests('if', 'If')
-add_tests('while', 'While')
+#add_tests('while', 'While')
