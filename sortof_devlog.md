@@ -9,7 +9,9 @@ A sort of devlog des 4 derniers jours avant le rendu du projet, une initiative p
 ## kessessé les soucis majeur : 
 - comparaison : on ne peut comparer que des expressions booléennes ou que des expressions arithmétiques ensemble 
 (doit surement se passer un truc dans bexpr, mais si j'y met comparaison ça me fait une récurrence à gauche)
-- read : fait de la merde 
+Erreur que j'obtiens quand il y a comparaison dans bexpr: 
+```The following sets of rules are mutually left-recursive [expr, comparaison, nexpr]```
+- read : fait de la merde
 - on ne peut plus initialiser des trucs comme "int x = true" mais on peut toujours faire des opérations arithmétiques sur les booléens :rolling-eyes:
 
 ## TODO list :
