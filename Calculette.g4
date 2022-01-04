@@ -28,8 +28,8 @@ instruction returns [String code]
 	| afficher 		{$code = $afficher.code;}
 	| lire 			{$code = $lire.code;}
 	| comparaison 	{$code = $comparaison.code + "POP\n";}
-	| if_instr		{$code=$if_instr.code;}
-	| while_instr{}
+	| if_instr		{$code = $if_instr.code;}
+	| dowhile_instr {$code = $dowhile_instr.code;}
 ;
 
 fin_instruction
@@ -105,7 +105,7 @@ lire returns [String code]
 ;
 
 bloc returns [String code]
-	: LACC NEWLINE+ 
+	: LACC NEWLINE* 
 		(instruction {$code += $instruction.code;} fin_instruction+)+
 	  RACC 
 ;
@@ -122,16 +122,14 @@ if_instr returns [String code]
 		int label_else = label;
 		String else_instr = new String();
 	 }
-	: IF LPAR condition RPAR {
+	: IF LPAR condition RPAR NEWLINE*{
 		$code = $condition.code;
 		$code += "JUMPF " + label_if + "\n";
 	 }
-	 (bloc {$code += $bloc.code;}
-	 | NEWLINE* instruction {$code += $instruction.code;}) 
+	 (bloc {$code += $bloc.code;} | instruction {$code += $instruction.code;})
 	 NEWLINE*
 	 (ELSE {$code += "JUMP " + label_else + "\n";} 
-	 (bloc {else_instr = $bloc.code;} 
-	 | NEWLINE* instruction {else_instr = $instruction.code;}))? 
+	 (bloc {else_instr = $bloc.code;} | instruction {else_instr = $instruction.code;}))? 
 	 {
 		$code += "LABEL " + label_if + "\n";
 		if(else_instr != "") {
@@ -142,8 +140,28 @@ if_instr returns [String code]
 	 NEWLINE*
 ;
 
-while_instr
-	:
+dowhile_instr returns [String code]
+@init{ 	label++;
+		int label_instr = label;
+		label++;
+		int label_condition = label;
+		label++;
+		int label_fin = label;
+		
+		String do_instr = new String();
+	 }
+	: DO (bloc {do_instr = $bloc.code;} | instruction fin_instruction+ {do_instr = $instruction.code;}) 
+	  WHILE LPAR condition RPAR
+	 {
+		$code = "JUMP " + label_instr + "\n";
+		$code += "LABEL " + label_condition + "\n";	
+		$code += $condition.code;
+		$code += "JUMPF " + label_fin + "\n";
+		$code += "LABEL " + label_instr + "\n";
+		$code += do_instr + "\n";
+		$code += "JUMP " + label_condition + "\n";
+		$code += "LABEL " + label_fin + "\n";
+	 }
 ;
 
 // LEXER
@@ -162,6 +180,8 @@ PRINT	: 'afficher' | 'print';
 READ	: 'lire' | 'read';
 IF		: 'si' | 'if';
 ELSE 	: 'sinon' | 'else';
+DO		: 'do' | 'repeter';
+WHILE 	: 'while' | 'tantque';
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
