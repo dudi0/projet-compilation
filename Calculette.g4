@@ -89,7 +89,7 @@ afficher returns [String code]
 
 bloc returns [String code]
 	: LACC NEWLINE+ 
-		(instruction {$code += $instruction.code;} NEWLINE+)+
+		(instruction {$code += $instruction.code;} fin_instruction+)+
 	  RACC 
 ;
 
@@ -103,18 +103,13 @@ if_instr returns [String code]
 		$code = $condition.code;
 		$code += "JUMPF " + label + "\n";
 	  }
-	  (bloc {
-        $code += $bloc.code;
+	  (bloc {$code += $bloc.code;}
+	  | NEWLINE* instruction {$code += $instruction.code;}) 
+	  {
 		$code += "LABEL " + label + "\n";
-	  	label++;
+		label++;
 	  }
-	  | NEWLINE* instruction {
-		$code = $condition.code;
-		$code += "JUMPF " + label + "\n";
-	  	$code += $instruction.code;
-	  	$code += "LABEL " + label + "\n";
-	  	label++;
-	  })
+
 ;
 
 
@@ -132,6 +127,7 @@ RACC	: '}';
 EQ		: '=';
 PRINT	: 'afficher' | 'print';
 IF		: 'si' | 'if';
+ELSE 	: 'sinon' | 'else';
 
 INT 	: [0-9]+;
 FLOAT 	: [0-9]+ ('.' [0-9]+)?;
