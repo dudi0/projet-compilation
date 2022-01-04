@@ -2,10 +2,13 @@ grammar Calculette;
 
 @header {
 	import java.util.HashMap;
+	import java.util.Scanner;
 }
 
 @members { 
-	HashMap<String, Integer> memory = new HashMap<String, Integer>();
+	HashMap<String, Integer> var_value = new HashMap<String, Integer>();
+	HashMap<String, String> var_type = new HashMap<String, String>();
+	Scanner sc = new Scanner(System.in);
 	int var_len = 0;
 	int label = -1;
 }
@@ -26,6 +29,7 @@ instruction returns [String code]
 	: assignation 	{$code = $assignation.code;}
 	| expr 			{$code = $expr.code + "POP\n";}
 	| afficher 		{$code = $afficher.code;}
+	| lire 			{$code = $lire.code;}
 	//| comparaison 	{$code = $comparaison.code + "POP\n";}
 	| if_instr		{$code=$if_instr.code;}
 	//| while_instr{}
@@ -44,12 +48,13 @@ expr returns [String code]
 nexpr returns [String code]
 // TODO: pow
 	: LPAR a=nexpr RPAR 		{$code = $a.code;}
+	| comparaison {$code = $comparaison.code;}
 	| a=nexpr MUL_OP b=nexpr 	{$code = $a.code + $b.code + $MUL_OP.getText();}
 	| a=nexpr MINUS b=nexpr 	{$code = $a.code + $b.code + $MINUS.getText();}
 	| a=nexpr ADD b=nexpr 		{$code = $a.code + $b.code + $ADD.getText();}
 	| MINUS INT {$code = "PUSHI "+ "-" + $INT.int + "\n";} 
 	| INT 		{$code = "PUSHI " + $INT.int + "\n";}
-	| ID 		{$code = "PUSHG " + memory.get($ID.text) + "\n";}
+	| ID 		{$code = "PUSHG " + var_value.get($ID.text) + "\n";}
 ;
 
 bexpr returns [String code]
@@ -58,7 +63,7 @@ bexpr returns [String code]
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
-	| ID 	{$code = "PUSHG " + memory.get($ID.text) + "\n";}
+	| ID 	{$code = "PUSHG " + var_value.get($ID.text) + "\n";}
 ;
 
 comparaison returns [String code]
@@ -69,22 +74,39 @@ comparaison returns [String code]
 
 declaration returns [String code]
 	: TYPE ID {
-		memory.put($ID.text, var_len);
+		var_type.put($ID.text, $TYPE.text);
+		var_value.put($ID.text, var_len);
 		var_len++;
 		$code = "PUSHI 0\n";
 	}
 ;
 
 assignation returns [String code]
-	: ID EQ expr {
-		$code = $expr.code;
-		$code += "STOREG " + memory.get($ID.text) + "\n";
+	: ID EQ nexpr {
+		if(var_type.get($ID.text).equals("int")){
+			$code = $nexpr.code;
+			$code += "STOREG " + var_value.get($ID.text) + "\n";
+		}
+	}
+	| ID EQ bexpr {
+		if(var_type.get($ID.text).equals("bool")){
+			$code = $bexpr.code;
+			$code += "STOREG " + var_value.get($ID.text) + "\n";
+		}
 	}
 ;
 
 afficher returns [String code]
 	: PRINT LPAR expr RPAR {$code = $expr.code + "WRITE\n" + "POP\n";}
 	| PRINT LPAR comparaison RPAR {$code = $comparaison.code + "WRITE\n" + "POP\n";}
+;
+
+lire returns [String code]
+	: READ LPAR ID RPAR {
+		int value = sc.nextInt();
+		$code = value +"\n";
+	 	$code += "STOREG " + var_value.get($ID.text) + "\n";
+	 }
 ;
 
 bloc returns [String code]
@@ -139,6 +161,7 @@ RACC	: '}';
 
 EQ		: '=';
 PRINT	: 'afficher' | 'print';
+READ	: 'lire' | 'read';
 IF		: 'si' | 'if';
 ELSE 	: 'sinon' | 'else';
 
