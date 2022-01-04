@@ -19,7 +19,6 @@ start returns [String code]
 	: (declaration fin_instruction+ {$code += $declaration.code;})*
 	  (instruction fin_instruction+ {$code += $instruction.code;})* 
 	  //(comparaison fin_instruction+ {$code += $comparaison.code + "POP\n";})*
-	  (if_instr fin_instruction+ 	{$code += $if_instr.code;})* 
 	  EOF
 ;
 
@@ -28,7 +27,7 @@ instruction returns [String code]
 	| expr 			{$code = $expr.code + "POP\n";}
 	| afficher 		{$code = $afficher.code;}
 	//| comparaison 	{$code = $comparaison.code + "POP\n";}
-	/////| if_instr		{$code=$if_instr.code;}
+	| if_instr		{$code=$if_instr.code;}
 	//| while_instr{}
 ;
 
@@ -90,21 +89,27 @@ afficher returns [String code]
 
 bloc returns [String code]
 	: LACC NEWLINE+ 
-		(instruction {$code = $instruction.code;})+ NEWLINE+ 
+		(instruction {$code += $instruction.code;} NEWLINE+)+
 	  RACC 
 ;
 
+condition returns [String code]
+    : bexpr {$code = $bexpr.code;}
+    | comparaison {$code = $comparaison.code;}
+;
+
 if_instr returns [String code]
-	: IF LPAR bexpr RPAR {
-		$code = $bexpr.code;
+	: IF LPAR condition RPAR {
+		$code = $condition.code;
 		$code += "JUMPF " + label + "\n";
 	  }
-	  (bloc {$code += $bloc.code;
+	  (bloc {
+        $code += $bloc.code;
 		$code += "LABEL " + label + "\n";
 	  	label++;
 	  }
-	  | instruction {
-		$code = $bexpr.code;
+	  | NEWLINE* instruction {
+		$code = $condition.code;
 		$code += "JUMPF " + label + "\n";
 	  	$code += $instruction.code;
 	  	$code += "LABEL " + label + "\n";
