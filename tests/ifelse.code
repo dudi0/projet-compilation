@@ -4,3 +4,4 @@ u = 1
 za = 42
 si (za < u) afficher(u)  
 sinon afficher (za)
+

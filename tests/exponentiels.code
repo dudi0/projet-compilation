@@ -1,0 +1,15 @@
+int x
+int y
+int z
+lire(x)
+lire(y)
+z=2^x+y
+afficher(z)
+z=2^(x+y)
+afficher(z)
+z=x^y+z
+afficher(z)
+z=x^(3y+1)
+afficher(z)
+z=x^((5*6*7*11 + 2)/11*5-1008)
+afficher(z)
