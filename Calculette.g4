@@ -7,7 +7,7 @@ grammar Calculette;
 @members { 
 	HashMap<String, Integer> memory = new HashMap<String, Integer>();
 	int var_len = 0;
-	int label = 0;
+	int label = -1;
 }
 
 // REGLES
@@ -99,17 +99,30 @@ condition returns [String code]
 ;
 
 if_instr returns [String code]
+@init{ 	label++;
+		int label_if = label;
+		label++;
+		int label_else = label;
+		String else_instr = new String();
+	 }
 	: IF LPAR condition RPAR {
 		$code = $condition.code;
-		$code += "JUMPF " + label + "\n";
-	  }
-	  (bloc {$code += $bloc.code;}
-	  | NEWLINE* instruction {$code += $instruction.code;}) 
-	  {
-		$code += "LABEL " + label + "\n";
-		label++;
-	  }
-
+		$code += "JUMPF " + label_if + "\n";
+	 }
+	 (bloc {$code += $bloc.code;}
+	 | NEWLINE* instruction {$code += $instruction.code;}) 
+	 NEWLINE*
+	 (ELSE {$code += "JUMP " + label_else + "\n";} 
+	 (bloc {else_instr = $bloc.code;} 
+	 | NEWLINE* instruction {else_instr = $instruction.code;}))? 
+	 {
+		$code += "LABEL " + label_if + "\n";
+		if(else_instr != "") {
+			$code += else_instr;
+			$code += "LABEL " + label_else + "\n";
+		}	
+	 }
+	 NEWLINE*
 ;
 
 
