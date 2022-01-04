@@ -1,0 +1,60 @@
+int i
+i = 0
+repeter i = i + 2
+tantque ( false or i <= 40)
+
+afficher(i)
+
+==out==
+42
+
+-----
+int y
+int za
+int x
+int endthen
+int endelse
+endthen = 0
+endelse = 0
+x=1
+y=1
+za=1
+repeter {
+  afficher(y)
+  endthen=1
+} tantque (x == 0 and endthen == 0)
+
+repeter {
+  afficher(za)
+  endelse=2
+} tantque (x<> 0 and endelse == 0)
+
+afficher(endthen)
+afficher(endelse)
+
+==out==
+1
+1
+1
+2
+
+-----
+int f
+int f1
+int f2
+int n
+n=5
+f1 = 1
+f2=1
+f=1
+repeter {
+ f=f1+f2
+ f2=f1
+ f1=f
+ n=n-1
+ } tantque(n>=2)
+ 
+afficher(f)
+
+==out==
+8
