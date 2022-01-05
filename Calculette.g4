@@ -14,7 +14,7 @@ grammar Calculette;
 // REGLES
 start returns [String code]
 @init{int i; $code = new String();}
-@after{	for(i = 0; i < var_len; i++) {$code += "POP\n";}
+@after{for(i = 0; i < var_len; i++) {$code += "POP\n";}
 		$code += "HALT\n";
 		System.out.println($code);}
 	: (declaration fin_instruction+ {$code += $declaration.code;})*
@@ -23,13 +23,13 @@ start returns [String code]
 ;
 
 instruction returns [String code]
-	: assignation 	{$code = $assignation.code;}
+	: assignation	{$code = $assignation.code;}
 	| expr 			{$code = $expr.code + "POP\n";}
 	| afficher 		{$code = $afficher.code;}
 	| lire 			{$code = $lire.code;}
-	| comparaison 	{$code = $comparaison.code + "POP\n";}
+	| comparaison	{$code = $comparaison.code + "POP\n";}
 	| if_instr		{$code = $if_instr.code;}
-	| dowhile_instr {$code = $dowhile_instr.code;}
+	| dowhile_instr	{$code = $dowhile_instr.code;}
 ;
 
 fin_instruction
