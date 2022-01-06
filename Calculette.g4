@@ -125,7 +125,7 @@ if_instr returns [String code]
 		$code = $condition.code;
 		$code += "JUMPF " + label_if + "\n";
 	 }
-	 (bloc {$code += $bloc.code;} | instruction {$code += $instruction.code;})
+	 (bloc {$code = $bloc.code;} | instruction {$code += $instruction.code;})
 	 NEWLINE*
 	 (ELSE {$code += "JUMP " + label_else + "\n";} 
 	 (bloc {else_instr = $bloc.code;} | instruction {else_instr = $instruction.code;}))? 
