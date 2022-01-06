@@ -120,8 +120,7 @@ if_instr returns [String code]
 	int label_if = label;
 	label++;
 	int label_else = label;
-	String else_instr = new String(); 
-	else_instr = "";}
+	String else_instr = new String();}
 	: IF LPAR condition RPAR NEWLINE*{
 		$code = $condition.code;
 		$code += "JUMPF " + label_if + "\n";
