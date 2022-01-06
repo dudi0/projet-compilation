@@ -15,8 +15,8 @@ grammar Calculette;
 start returns [String code]
 @init{int i; $code = new String();}
 @after{for(i = 0; i < var_len; i++) {$code += "POP\n";}
-		$code += "HALT\n";
-		System.out.println($code);}
+	$code += "HALT\n";
+	System.out.println($code);}
 	: (declaration fin_instruction+ {$code += $declaration.code;})*
 	  (instruction fin_instruction+ {$code += $instruction.code;})* 
 	  EOF
@@ -34,7 +34,7 @@ instruction returns [String code]
 
 fin_instruction
 	: SEMICOLON
-    | NEWLINE
+ 	| NEWLINE
 ;
 
 expr returns [String code]
@@ -55,17 +55,17 @@ nexpr returns [String code]
 
 bexpr returns [String code]
 	: LPAR a=bexpr RPAR 		{$code = $a.code;}
-	| NOT a=bexpr 				{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
+	| NOT a=bexpr			{$code = "PUSHI 1\n" + $a.code + "SUB\n";}
 	| a=bexpr AND b=bexpr 		{$code = $a.code + $b.code + "MUL\n";}
 	| a=bexpr OR b=bexpr 		{$code = $a.code + $b.code + "ADD\n" + "PUSHI 0\n" + "NEQ\n";}
-	| comparaison 				{$code = $comparaison.code;}
+	| comparaison			{$code = $comparaison.code;}
 	| BOOL 	{$code = "PUSHI " + $BOOL.getText();}
 	| ID 	{$code = "PUSHG " + var_value.get($ID.text) + "\n";}
 ;
 
 comparaison returns [String code]
-    : a=nexpr COMP b=nexpr 	{$code = $a.code + $b.code + $COMP.getText();}
-    | NOT comparaison 		{$code = "PUSHI 1\n" + $comparaison.code + "SUB\n";}
+	: a=nexpr COMP b=nexpr	{$code = $a.code + $b.code + $COMP.getText();}
+	| NOT comparaison	{$code = "PUSHI 1\n" + $comparaison.code + "SUB\n";}
 ;
 
 declaration returns [String code]
@@ -111,17 +111,16 @@ bloc returns [String code]
 ;
 
 condition returns [String code]
-    : bexpr {$code = $bexpr.code;}
-    | comparaison {$code = $comparaison.code;}
+	: bexpr {$code = $bexpr.code;}
+	| comparaison {$code = $comparaison.code;}
 ;
 
 if_instr returns [String code]
 @init{ 	label++;
-		int label_if = label;
-		label++;
-		int label_else = label;
-		String else_instr = new String(); 
-	 }
+	int label_if = label;
+	label++;
+	int label_else = label;
+	String else_instr = new String(); }
 	: IF LPAR condition RPAR NEWLINE*{
 		$code = $condition.code;
 		$code += "JUMPF " + label_if + "\n";
@@ -142,14 +141,13 @@ if_instr returns [String code]
 
 dowhile_instr returns [String code]
 @init{ 	label++;
-		int label_instr = label;
-		label++;
-		int label_condition = label;
-		label++;
-		int label_fin = label;
+	int label_instr = label;
+	label++;
+	int label_condition = label;
+	label++;
+	int label_fin = label;
 		
-		String do_instr = new String();
-	 }
+	String do_instr = new String();}
 	: DO (bloc {do_instr = $bloc.code;} | instruction fin_instruction+ {do_instr = $instruction.code;}) 
 	  WHILE LPAR condition RPAR
 	 {
@@ -166,7 +164,7 @@ dowhile_instr returns [String code]
 
 // LEXER
 NEWLINE : '\r'? '\n';
-WS 		: (' '|'\t')+ -> skip;
+WS 	: (' '|'\t')+ -> skip;
 
 SEMICOLON : ';';
 
@@ -175,10 +173,10 @@ RPAR	: ')';
 LACC	: '{';
 RACC	: '}';
 
-EQ		: '=';
+EQ	: '=';
 PRINT	: 'afficher' | 'print';
 READ	: 'lire' | 'read';
-IF		: 'si' | 'if';
+IF	: 'si' | 'if';
 ELSE 	: 'sinon' | 'else';
 DO		: 'do' | 'repeter';
 WHILE 	: 'while' | 'tantque';
@@ -194,8 +192,7 @@ BOOL 	: 'true' {setText("1\n");} | 'false' {setText("0\n");};
 AND 	: 'and';
 OR 		: 'or' ;
 NOT 	: 'not' ;
-COMP 
-	: '=='	{setText("EQUAL\n");}
+COMP	: '=='	{setText("EQUAL\n");}
 	| '<>'	{setText("NEQ\n");}
 	| '>' 	{setText("SUP\n");}
 	| '<' 	{setText("INF\n");}
@@ -204,7 +201,7 @@ COMP
 ;
 
 TYPE 	: 'int' | 'float' | 'bool';
-ID 		: ([a-zA-Z] | '_') [a-zA-Z0-9]*;
+ID 	: ([a-zA-Z] | '_') ([a-zA-Z0-9] | '_')*;
 
 COMMENT : '/*' .*? '*/' -> skip;
 
