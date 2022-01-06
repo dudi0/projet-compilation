@@ -1,4 +1,4 @@
-grammar Calculette;
+grammar Calculette_OcalanFeyzaNur_ValletEmilie;
 
 @header {
 	import java.util.HashMap;
